@@ -37,7 +37,7 @@ async function fetchTransactionsFromDB() {
     return results.map(transaction => ({
       id: transaction.id,
       amount: transaction.get('amount'),
-      date: transaction.get('date').toISOString().split('T')[0],
+      date: transaction.get('date'),
       comment: transaction.get('comment'),
     }));
   } catch (error) {
