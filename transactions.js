@@ -1,29 +1,11 @@
-// Date default to current date
-document.getElementById('date').valueAsDate = new Date();
-
-// Handle transaction form submission
-document.getElementById('transaction-form').addEventListener('submit', async function (e) {
-  e.preventDefault();
-  const amount = parseFloat(document.getElementById('amount').value);
-  const date = document.getElementById('date').value || new Date().toISOString().split('T')[0];
-  const comment = document.getElementById('comment').value;
-
-  if (!amount || isNaN(amount)) {
-    alert('Please enter a valid amount.');
-    return;
-  }
-
-  await saveTransactionToDB(amount, date, comment);
-  e.target.reset();
-  document.getElementById('date').valueAsDate = new Date();
-});
+// transactions.js
 
 // Display transactions grouped by month/year
-function displayTransactions(filteredTransactions = transactions) {
+function displayTransactions(transactions) {
   const transactionContainer = document.getElementById('transaction-container');
   transactionContainer.innerHTML = '';
 
-  const groupedTransactions = groupTransactionsByMonthYear(filteredTransactions);
+  const groupedTransactions = groupTransactionsByMonthYear(transactions);
 
   Object.keys(groupedTransactions)
     .sort((a, b) => b.localeCompare(a))
@@ -60,4 +42,16 @@ function displayTransactions(filteredTransactions = transactions) {
       `;
       transactionContainer.appendChild(table);
     });
+}
+
+// Group transactions by month and year
+function groupTransactionsByMonthYear(transactions) {
+  return transactions.reduce((acc, transaction) => {
+    const [year, month] = transaction.date.split('-');
+    const monthYear = `${year}-${month}`;
+    if (!acc[monthYear]) acc[monthYear] = { total: 0, transactions: [] };
+    acc[monthYear].total += transaction.amount;
+    acc[monthYear].transactions.push(transaction);
+    return acc;
+  }, {});
 }

@@ -1,59 +1,33 @@
-// Handle Sign-Up Form Submission
-document.getElementById('signup-form').addEventListener('submit', async function (e) {
-  e.preventDefault();
-  const name = document.getElementById('signup-name').value;
-  const pin = document.getElementById('signup-pin').value;
+// auth.js
 
+// Handle Sign-Up Form Submission
+async function signUpUser(name, pin) {
+  const user = new Parse.User();
+  user.set("username", name);
+  user.set("password", pin);
   try {
-    const user = new Parse.User();
-    user.set("username", name);
-    user.set("password", pin);
     await user.signUp();
     alert("Sign-Up Successful! Please Login.");
-    toggleContainers('login');
+    return true;
   } catch (error) {
     alert("Error during sign-up: " + error.message);
+    return false;
   }
-});
+}
 
 // Handle Login Form Submission
-document.getElementById('login-form').addEventListener('submit', async function (e) {
-  e.preventDefault();
-  const name = document.getElementById('name').value;
-  const pin = document.getElementById('pin').value;
-
+async function logInUser(name, pin) {
   try {
     await Parse.User.logIn(name, pin);
-    toggleContainers('expense');
-    await fetchTransactionsFromDB();
+    return true;
   } catch (error) {
     alert("Login Failed: " + error.message);
+    return false;
   }
-});
+}
 
 // Handle Logout
-document.getElementById('logout-btn').addEventListener('click', async function () {
+async function logOutUser() {
   await Parse.User.logOut();
-  toggleContainers('login');
-});
-
-// Toggle containers between login, signup, and expense
-function toggleContainers(view) {
-  const loginContainer = document.getElementById('login-container');
-  const signupContainer = document.getElementById('signup-container');
-  const expenseContainer = document.getElementById('expense-container');
-
-  if (view === 'login') {
-    loginContainer.style.display = 'block';
-    signupContainer.style.display = 'none';
-    expenseContainer.style.display = 'none';
-  } else if (view === 'signup') {
-    loginContainer.style.display = 'none';
-    signupContainer.style.display = 'block';
-    expenseContainer.style.display = 'none';
-  } else if (view === 'expense') {
-    loginContainer.style.display = 'none';
-    signupContainer.style.display = 'none';
-    expenseContainer.style.display = 'block';
-  }
+  console.log('User logged out');
 }
