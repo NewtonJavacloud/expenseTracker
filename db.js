@@ -1,4 +1,4 @@
-// dbConnection.js
+// db.js
 
 // Initialize Parse
 Parse.initialize("IYLHZnugAnW5yNuoGEva7KQ8aQXF8agoGatm0dPG", "CKTZ1KhUFx7EG4bpDgunsP45R2rNnrRMaJ9zGXGo");
@@ -18,7 +18,12 @@ async function saveTransactionToDB(amount, date, comment) {
   try {
     const result = await transaction.save();
     console.log('Transaction saved:', result);
-    return result;
+    return {
+      id: result.id,
+      amount,
+      date,
+      comment,
+    };
   } catch (error) {
     console.error('Error saving transaction:', error.message);
     throw error;
@@ -37,7 +42,7 @@ async function fetchTransactionsFromDB() {
     return results.map(transaction => ({
       id: transaction.id,
       amount: transaction.get('amount'),
-      date: transaction.get('date'),
+      date: new Date(transaction.get('date')), // Convert to Date object
       comment: transaction.get('comment'),
     }));
   } catch (error) {
