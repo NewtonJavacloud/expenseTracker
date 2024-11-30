@@ -42,7 +42,10 @@ document.getElementById('login-form').addEventListener('submit', async function 
   if (success) {
     loginContainer.style.display = 'none';
     expenseContainer.style.display = 'block';
-    await fetchTransactionsFromDB();
+    transactions.length = 0; // Clear old data
+    const fetchedTransactions = await fetchTransactionsFromDB();
+    transactions.push(...fetchedTransactions); // Populate transactions
+    displayTransactions(transactions); // Show on UI
   }
 });
 
@@ -94,3 +97,21 @@ window.filterByMonthYear = function () {
     displayTransactions(transactions);
   }
 };
+
+document.getElementById('transaction-form').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  const amount = parseFloat(document.getElementById('amount').value);
+  const date = document.getElementById('date').value || new Date().toISOString().split('T')[0];
+  const comment = document.getElementById('comment').value;
+
+  if (!amount || isNaN(amount)) {
+    alert('Please enter a valid amount.');
+    return;
+  }
+
+  const savedTransaction = await saveTransactionToDB(amount, date, comment);
+  transactions.push(savedTransaction);
+  displayTransactions(transactions); // Update display
+  e.target.reset();
+  document.getElementById('date').valueAsDate = new Date();
+});
