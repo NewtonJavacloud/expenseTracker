@@ -1,49 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Expense Tracker</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <!-- Include Parse SDK -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/parse/3.4.3/parse.min.js"></script>
 </head>
+
 <body>
-  <div class="container">
-    <h1>Expense Tracker</h1>
-    <form id="transaction-form">
-      <div class="form-group">
-        <label for="amount">Amount:</label>
-        <input type="number" id="amount" name="amount" placeholder="Enter amount" required>
-      </div>
-
-      <div class="form-group">
-        <label for="date">Date:</label>
-        <input type="date" id="date" name="date">
-      </div>
-
-      <div class="form-group">
-        <label for="comment">Comment:</label>
-        <input type="text" id="comment" name="comment" placeholder="Add a comment">
-      </div>
-
-      <button type="submit" class="btn">Add Transaction</button>
-    </form>
-
-<div id="summary">
-  <h2>Monthly Expenses</h2>
-  <div id="card-container" class="card-grid"></div>
+<!-- Sign-Up Container -->
+<div id="signup-container" class="container">
+  <h2>Sign Up</h2>
+  <form id="signup-form">
+    <label for="signup-name">Name:</label>
+    <input type="text" id="signup-name" placeholder="Enter your name" required>
+    <br>
+    <br>
+    <label for="signup-pin">PIN (6 digits):</label>
+    <input type="password" id="signup-pin" placeholder="Enter your 6-digit PIN" required maxlength="6">
+    <br>
+    <br>
+    <button type="submit" class="btn">Sign Up</button>
+    <p>Already have an account? <a href="#" id="goto-login">Login here</a></p>
+  </form>
 </div>
 
-<div id="transaction-summary">
-  <h2>Transactions Summary</h2>
-  <div id="filter">
-    <label for="month-filter">Filter by Month-Year:</label>
-    <input type="month" id="month-filter" onchange="filterByMonthYear()">
+<!-- Login Container -->
+<div id="login-container" class="container" style="display:none;">
+  <h2>Login</h2>
+  <form id="login-form">
+    <label for="name">Name:</label>
+    <input type="text" id="name" placeholder="Enter your name" required>
+    <br>
+    <br>
+    <label for="pin">PIN (6 digits):</label>
+    <input type="password" id="pin" placeholder="Enter your 6-digit PIN" required maxlength="6">
+    <br>
+    <br>
+    <button type="submit" class="btn">Login</button>
+    <p>Don’t have an account? <a href="#" id="goto-signup">Sign up here</a></p>
+  </form>
+</div>
+
+<!-- Expense Tracker Container -->
+<div class="container" id="expense-container" style="display: none;">
+  <h1>Expense Tracker</h1>
+  <button id="logout-btn" class="btn">Logout</button>
+
+  <!-- Transaction Form -->
+  <form id="transaction-form">
+    <div class="form-group">
+      <label for="amount">Amount (₹):</label>
+      <input type="number" id="amount" name="amount" placeholder="Enter amount" required>
+    </div>
+
+    <div class="form-group">
+      <label for="date">Date:</label>
+      <input type="date" id="date" name="date" required>
+    </div>
+
+    <div class="form-group">
+      <label for="comment">Comment:</label>
+      <input type="text" id="comment" name="comment" placeholder="Add a comment">
+    </div>
+
+    <button type="submit" class="btn">Add Transaction</button>
+  </form>
+
+  <div id="summary">
+    <h2>Monthly Expenses</h2>
+    <div id="card-container" class="card-grid"></div>
   </div>
 
-  <div id="transaction-container"></div>
+  <div id="transaction-summary">
+    <h2>Transactions Summary</h2>
+    <div id="filter">
+      <label for="month-filter">Filter by Month-Year:</label>
+      <input type="month" id="month-filter">
+    </div>
+    <div id="transaction-container"></div>
+  </div>
 </div>
 
-  <script src="app.js"></script>
+<script src="app.js"></script>
 </body>
+
 </html>
