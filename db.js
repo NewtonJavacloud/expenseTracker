@@ -1,7 +1,7 @@
 // dbConnection.js
 
 // Initialize Parse
-Parse.initialize("IYLHZnugAnW5yNuoGEva7KQ8aQXF8agoGatm0dPG", "CKTZ1KhUFx7EG4bpDgunsP45R2nNrRMaJ9zGXGo");
+Parse.initialize("IYLHZnugAnW5yNuoGEva7KQ8aQXF8agoGatm0dPG", "CKTZ1KhUFx7EG4bpDgunsP45R2rNnrRMaJ9zGXGo");
 Parse.serverURL = 'https://parseapi.back4app.com';
 
 // Save transaction to Back4App
