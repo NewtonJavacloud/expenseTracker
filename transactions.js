@@ -1,6 +1,6 @@
 // transactions.js
 
-// Display transactions grouped by month/year
+// Function to display transactions
 function displayTransactions(transactions) {
   const transactionContainer = document.getElementById('transaction-container');
   transactionContainer.innerHTML = '';
@@ -11,7 +11,9 @@ function displayTransactions(transactions) {
     .sort((a, b) => b.localeCompare(a))
     .forEach(monthYear => {
       const label = document.createElement('h3');
-      label.textContent = `${new Date(monthYear).toLocaleString('default', { month: 'long' })} ${monthYear.split('-')[0]} - Total: ₹${groupedTransactions[monthYear].total.toFixed(2)}`;
+      const [year, month] = monthYear.split('-');
+      const monthName = new Date(year, month - 1).toLocaleString('default', { month: 'long' });
+      label.textContent = `${monthName} ${year} - Total: ₹${groupedTransactions[monthYear].total.toFixed(2)}`;
       transactionContainer.appendChild(label);
 
       const table = document.createElement('table');
@@ -19,7 +21,7 @@ function displayTransactions(transactions) {
       table.innerHTML = `
         <thead>
           <tr>
-            <th>Date</th>
+            <th>Date & Time</th>
             <th>Amount (₹)</th>
             <th>Comment</th>
             <th>Actions</th>
@@ -27,31 +29,49 @@ function displayTransactions(transactions) {
         </thead>
         <tbody>
           ${groupedTransactions[monthYear].transactions
-            .sort((a, b) => b.date.localeCompare(a.date))
-            .map(transaction => `
-              <tr>
-                <td>${transaction.date}</td>
-                <td>₹${transaction.amount.toFixed(2)}</td>
-                <td>${transaction.comment || 'No comment'}</td>
-                <td>
-                  <button onclick="deleteTransaction('${transaction.id}')" class="delete-btn">Delete</button>
-                </td>
-              </tr>`)
-            .join('')}
+            .sort((a, b) => new Date(b.date) - new Date(a.date))
+            .map(transaction => {
+              const date = new Date(transaction.date);
+              if (!isValidDate(date)) return ''; // Skip invalid dates
+              const formattedDate = date.toLocaleDateString('en-GB', {
+                day: '2-digit', month: '2-digit', year: 'numeric'
+              });
+              const formattedTime = date.toLocaleTimeString('en-US', {
+                hour: '2-digit', minute: '2-digit', hour12: true
+              });
+              const amount = parseFloat(transaction.amount).toFixed(2);
+              return `
+                <tr>
+                  <td>${formattedDate} ${formattedTime}</td>
+                  <td>₹${amount}</td>
+                  <td>${transaction.comment || 'No comment'}</td>
+                  <td>
+                    <button onclick="deleteTransaction('${transaction.id}')" class="delete-btn">Delete</button>
+                  </td>
+                </tr>`;
+            }).join('')}
         </tbody>
       `;
       transactionContainer.appendChild(table);
     });
 }
 
-// Group transactions by month and year
+// Function to group transactions by month and year
 function groupTransactionsByMonthYear(transactions) {
   return transactions.reduce((acc, transaction) => {
-    const [year, month] = transaction.date.split('-');
+    const date = new Date(transaction.date);
+    if (!isValidDate(date)) return acc; // Skip invalid dates
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based in JavaScript
     const monthYear = `${year}-${month}`;
     if (!acc[monthYear]) acc[monthYear] = { total: 0, transactions: [] };
-    acc[monthYear].total += transaction.amount;
+    acc[monthYear].total += parseFloat(transaction.amount);
     acc[monthYear].transactions.push(transaction);
     return acc;
   }, {});
+}
+
+// Helper function to check if a date is valid
+function isValidDate(date) {
+  return date instanceof Date && !isNaN(date);
 }

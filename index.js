@@ -4,13 +4,13 @@
 const loginContainer = document.getElementById('login-container');
 const signupContainer = document.getElementById('signup-container');
 const expenseContainer = document.getElementById('expense-container');
-const transactions = [];
+let transactions = [];
 
 // Toggle between Login and Sign-Up
 document.getElementById('goto-signup').addEventListener('click', function (e) {
   e.preventDefault();
-  loginContainer.style.display = 'none';
   signupContainer.style.display = 'block';
+  loginContainer.style.display = 'none';
 });
 
 document.getElementById('goto-login').addEventListener('click', function (e) {
@@ -57,14 +57,18 @@ document.getElementById('logout-btn').addEventListener('click', async function (
   transactions.length = 0; // Clear transaction list
 });
 
-// Date default to current date
+// Date default to current date and time
 document.getElementById('date').valueAsDate = new Date();
+document.getElementById('time').value = new Date().toTimeString().split(' ')[0].substring(0, 5);
 
 // Handle transaction form submission
 document.getElementById('transaction-form').addEventListener('submit', async function (e) {
   e.preventDefault();
   const amount = parseFloat(document.getElementById('amount').value);
-  const date = document.getElementById('date').value || new Date().toISOString().split('T')[0];
+  const dateInput = document.getElementById('date').value;
+  const timeInput = document.getElementById('time').value;
+  const dateTime = new Date(`${dateInput}T${timeInput}`);
+  const correctDateTime = dateTime; // Store as Date object
   const comment = document.getElementById('comment').value;
 
   if (!amount || isNaN(amount)) {
@@ -72,20 +76,18 @@ document.getElementById('transaction-form').addEventListener('submit', async fun
     return;
   }
 
-  await saveTransactionToDB(amount, date, comment);
+  const savedTransaction = await saveTransactionToDB(amount, correctDateTime, comment);
+  transactions.push({
+    id: savedTransaction.id,
+    amount,
+    date: correctDateTime,
+    comment,
+  });
+  displayTransactions(transactions); // Update display immediately
   e.target.reset();
   document.getElementById('date').valueAsDate = new Date();
+  document.getElementById('time').value = new Date().toTimeString().split(' ')[0].substring(0, 5);
 });
-
-// Delete transaction
-window.deleteTransaction = async function (id) {
-  const index = transactions.findIndex(transaction => transaction.id === id);
-  if (index !== -1) {
-    await deleteTransactionFromDB(id);
-    transactions.splice(index, 1);
-    displayTransactions(transactions);
-  }
-};
 
 // Filter transactions by month/year
 window.filterByMonthYear = function () {
@@ -98,20 +100,21 @@ window.filterByMonthYear = function () {
   }
 };
 
-document.getElementById('transaction-form').addEventListener('submit', async function (e) {
-  e.preventDefault();
-  const amount = parseFloat(document.getElementById('amount').value);
-  const date = document.getElementById('date').value || new Date().toISOString().split('T')[0];
-  const comment = document.getElementById('comment').value;
-
-  if (!amount || isNaN(amount)) {
-    alert('Please enter a valid amount.');
-    return;
-  }
-
-  const savedTransaction = await saveTransactionToDB(amount, date, comment);
-  transactions.push(savedTransaction);
-  displayTransactions(transactions); // Update display
-  e.target.reset();
-  document.getElementById('date').valueAsDate = new Date();
+// Initial load of transactions from Back4App
+document.addEventListener('DOMContentLoaded', async function () {
+  transactions = await fetchTransactionsFromDB();
+  displayTransactions(transactions);
 });
+
+// Helper functions for Back4App
+async function signUpUser(name, pin) {
+  // Implement sign-up logic using Back4App
+}
+
+async function logInUser(name, pin) {
+  // Implement login logic using Back4App
+}
+
+async function logOutUser() {
+  // Implement logout logic using Back4App
+}
