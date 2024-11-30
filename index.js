@@ -9,8 +9,8 @@ let transactions = [];
 // Toggle between Login and Sign-Up
 document.getElementById('goto-signup').addEventListener('click', function (e) {
   e.preventDefault();
-  loginContainer.style.display = 'none';
   signupContainer.style.display = 'block';
+  loginContainer.style.display = 'none';
 });
 
 document.getElementById('goto-login').addEventListener('click', function (e) {

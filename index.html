@@ -13,7 +13,7 @@
 
 <body>
 <!-- Sign-Up Container -->
-<div id="signup-container" class="container">
+<div id="signup-container" class="container" style="display:none;">
   <h2>Sign Up</h2>
   <form id="signup-form">
     <label for="signup-name">Name:</label>
@@ -30,7 +30,7 @@
 </div>
 
 <!-- Login Container -->
-<div id="login-container" class="container" style="display:none;">
+<div id="login-container" class="container">
   <h2>Login</h2>
   <form id="login-form">
     <label for="name">Name:</label>
@@ -62,7 +62,10 @@
       <label for="date">Date:</label>
       <input type="date" id="date" name="date" required>
     </div>
-    <div class="form-group"> <label for="time">Time:</label> <input type="time" id="time" name="time" required> </div>
+    <div class="form-group">
+      <label for="time">Time:</label>
+      <input type="time" id="time" name="time" required>
+    </div>
 
     <div class="form-group">
       <label for="comment">Comment:</label>
