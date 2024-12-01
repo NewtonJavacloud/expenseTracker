@@ -96,6 +96,8 @@ button.btn:hover {
   padding: 5px 10px;
   border-radius: 5px;
   cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .delete-btn:hover {
@@ -135,6 +137,15 @@ button.btn:hover {
   .card-grid {
     flex-direction: column;
   }
+
+  .transaction-table th,
+  .transaction-table td {
+    padding: 8px;
+  }
+
+  .delete-btn {
+    padding: 5px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -154,5 +165,14 @@ button.btn:hover {
 
   button.btn {
     padding: 8px 12px;
+  }
+
+  .transaction-table th,
+  .transaction-table td {
+    padding: 5px;
+  }
+
+  .delete-btn {
+    padding: 4px;
   }
 }
