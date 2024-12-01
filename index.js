@@ -118,3 +118,13 @@ async function logInUser(name, pin) {
 async function logOutUser() {
   // Implement logout logic using Back4App
 }
+
+// Define deleteTransaction globally
+window.deleteTransaction = async function (id) {
+  const index = transactions.findIndex(transaction => transaction.id === id);
+  if (index !== -1) {
+    await deleteTransactionFromDB(id);
+    transactions.splice(index, 1);
+    displayTransactions(transactions);
+  }
+};
