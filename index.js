@@ -40,6 +40,8 @@ document.getElementById('login-form').addEventListener('submit', async function 
 
   const success = await logInUser(name, pin);
   if (success) {
+    localStorage.setItem('username', name);
+    localStorage.setItem('sessionToken', Parse.User.current().getSessionToken());
     loginContainer.style.display = 'none';
     expenseContainer.style.display = 'block';
     transactions.length = 0; // Clear old data
@@ -52,6 +54,8 @@ document.getElementById('login-form').addEventListener('submit', async function 
 // Handle Logout
 document.getElementById('logout-btn').addEventListener('click', async function () {
   await logOutUser();
+  localStorage.removeItem('username');
+  localStorage.removeItem('sessionToken');
   expenseContainer.style.display = 'none';
   loginContainer.style.display = 'block';
   transactions.length = 0; // Clear transaction list
@@ -100,10 +104,28 @@ window.filterByMonthYear = function () {
   }
 };
 
-// Initial load of transactions from Back4App
+// Check for existing session on page load
 document.addEventListener('DOMContentLoaded', async function () {
-  transactions = await fetchTransactionsFromDB();
-  displayTransactions(transactions);
+  const username = localStorage.getItem('username');
+  const sessionToken = localStorage.getItem('sessionToken');
+
+  if (username && sessionToken) {
+    try {
+      await Parse.User.become(sessionToken); // Restore session using the session token
+      expenseContainer.style.display = 'block';
+      loginContainer.style.display = 'none';
+      transactions = await fetchTransactionsFromDB();
+      displayTransactions(transactions);
+    } catch (error) {
+      console.error('Session restoration failed:', error.message);
+      localStorage.removeItem('username');
+      localStorage.removeItem('sessionToken');
+    }
+  } else {
+    loginContainer.style.display = 'block';
+  }
+  document.getElementById('date').valueAsDate = new Date();
+  document.getElementById('time').value = new Date().toTimeString().split(' ')[0].substring(0, 5);
 });
 
 // Helper functions for Back4App
