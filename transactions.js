@@ -11,10 +11,13 @@ function displayTransactions(transactions) {
     .sort((a, b) => b.localeCompare(a))
     .forEach(monthYear => {
       const label = document.createElement('h3');
-      const [year, month] = monthYear.split('-');
-      const monthName = new Date(year, month - 1).toLocaleString('default', { month: 'long' });
-      label.textContent = `${monthName} ${year} - Total: ₹${groupedTransactions[monthYear].total.toFixed(2)}`;
+      label.classList.add('month-label');
+      label.textContent = `${formatMonthYear(monthYear)} - Total: ₹${groupedTransactions[monthYear].total.toFixed(2)}`;
       transactionContainer.appendChild(label);
+
+      const tableContainer = document.createElement('div');
+      tableContainer.classList.add('transaction-table-container');
+      tableContainer.style.display = 'none'; // Initially hidden
 
       const table = document.createElement('table');
       table.classList.add('transaction-table');
@@ -52,8 +55,21 @@ function displayTransactions(transactions) {
             }).join('')}
         </tbody>
       `;
-      transactionContainer.appendChild(table);
+      tableContainer.appendChild(table);
+      transactionContainer.appendChild(tableContainer);
+
+      label.addEventListener('click', function () {
+        const isVisible = tableContainer.style.display === 'block';
+        tableContainer.style.display = isVisible ? 'none' : 'block';
+      });
     });
+}
+
+// Function to format month and year
+function formatMonthYear(monthYear) {
+  const [year, month] = monthYear.split('-');
+  const monthName = new Date(year, month - 1).toLocaleString('default', { month: 'long' });
+  return `${monthName} ${year}`;
 }
 
 // Function to group transactions by month and year
